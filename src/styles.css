@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #09090b;
+  --color-surface: #121214;
+  --color-raised: #1c1c20;
+  --color-fg: #f4f4f2;
+  --color-muted: #8e8e96;
+  --color-accent: #c8ccd4;
+  --color-border: #2a2a30;
+  --color-phosphor: #7dff9a;
+  --color-crt: #06110c;
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, "Times New Roman", serif;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+.stagger-item {
+  animation: fade-up 400ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.stagger-item:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-item:nth-child(2) {
+  animation-delay: 80ms;
+}
+.stagger-item:nth-child(3) {
+  animation-delay: 140ms;
+}
+.stagger-item:nth-child(4) {
+  animation-delay: 200ms;
+}
+.stagger-item:nth-child(5) {
+  animation-delay: 260ms;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.reverb-slider {
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.reverb-slider:focus-visible {
+  outline: none;
+}
+
+.reverb-slider::-webkit-slider-runnable-track {
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-fg) 16%, transparent);
+}
+
+.reverb-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -7px;
+  border-radius: 999px;
+  background: var(--color-fg);
+  box-shadow: 0 0 0 4px var(--color-bg);
+}
+
+.reverb-slider::-moz-range-track {
+  height: 2px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-fg) 16%, transparent);
+}
+
+.reverb-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-fg);
+}
+
+.crt-face {
+  background: var(--color-crt);
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, var(--color-phosphor) 16%, transparent),
+    inset 0 0 42px rgba(0, 0, 0, 0.55),
+    inset 0 0 110px rgba(6, 40, 22, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-item {
+    animation: none;
+  }
+}
