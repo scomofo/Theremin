@@ -11,6 +11,7 @@ import {
   parseAppEnv,
   projectRoot,
   readAppEnv,
+  usesShellForSpawn,
 } from "./with-app-env.mjs";
 
 const execFileAsync = promisify(execFile);
@@ -125,4 +126,17 @@ test("the CLI still runs when invoked through a symlinked path", async () => {
     PRINT_FLAG,
   ]);
   assert.equal(stdout, "false");
+});
+
+test("win32 spawns bare commands through a shell so .cmd shims resolve", () => {
+  // Bare `vite`/`npm` are .cmd shims on Windows; Node's spawn cannot execute
+  // them without a shell and fails with `spawn <command> ENOENT`.
+  assert.equal(usesShellForSpawn("win32"), true);
+});
+
+test("posix platforms spawn without a shell, keeping the direct child pid", () => {
+  // The wrapper forwards SIGINT/SIGTERM/SIGHUP to the child's pid, so the
+  // shell must not be injected where it isn't needed.
+  assert.equal(usesShellForSpawn("linux"), false);
+  assert.equal(usesShellForSpawn("darwin"), false);
 });

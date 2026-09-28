@@ -88,6 +88,19 @@ export function projectRoot() {
 }
 
 /**
+ * Whether the wrapped command must go through a shell.
+ *
+ * On Windows, bare commands like `vite`/`npm` resolve to `.cmd` shims, which
+ * Node's spawn cannot execute without a shell — it dies with
+ * `spawn <command> ENOENT`. Everywhere else the child runs directly so the
+ * wrapper's signal plumbing (SIGINT/SIGTERM/SIGHUP forwarding to the child
+ * pid) keeps working on the real process.
+ */
+export function usesShellForSpawn(platform = process.platform) {
+  return platform === "win32";
+}
+
+/**
  * Whether `moduleUrl` is the script node was asked to run.
  *
  * Both sides are resolved through symlinks: node realpaths `import.meta.url`
@@ -111,7 +124,15 @@ function main(argv) {
     process.exit(2);
   }
   const env = mergeAppEnv(readAppEnv(projectRoot()), process.env);
-  const child = spawn(command, args, { stdio: "inherit", env });
+  // On Windows, bare commands like `vite`/`npm` resolve to `.cmd` shims,
+  // which Node's spawn cannot execute without a shell — without this the
+  // wrapper dies with `spawn <command> ENOENT`. Non-Windows platforms keep
+  // the direct exec for signal plumbing that relies on the child pid.
+  const child = spawn(command, args, {
+    stdio: "inherit",
+    env,
+    shell: usesShellForSpawn(),
+  });
   // The dev server is long-running and is stopped by signalling this wrapper.
   for (const signal of ["SIGINT", "SIGTERM", "SIGHUP"]) {
     process.on(signal, () => child.kill(signal));
