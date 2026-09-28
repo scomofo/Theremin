@@ -26,7 +26,10 @@ The workspace ships a ready `vite.config.ts` and `tsconfig.json` — don't
 recreate them, and don't import a vendored `vite-tanstack-config` preset. The
 config:
 
-- binds the dev port `0.0.0.0:8080`;
+- binds the dev port `0.0.0.0:8080` — this is the Grok sandbox contract as written
+  in the config; on your own machine the `dev` script's `--port 8091` flag
+  overrides it per the port map. Don't "fix" the 8080/8081 values here — the
+  `vite preview` QA contract on 8081 is untouched;
 - pins `vite preview` to loopback `127.0.0.1:8081`, so the built output can
   never be picked up as the user's live preview;
 - gates `nitro({ preset: "vercel" })` on `command === "build" || isPreview`, so

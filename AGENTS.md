@@ -50,6 +50,12 @@ their machine.
 - Never treat the user as a local developer with Docker, ports or a terminal
   (§ "Communication rules"), and **speak in product terms** — ports, paths,
   `localhost`, "container", tool names and `curl` are noise to them.
+- **Port map vs. sandbox contract:** the fixed-port rule above is the Grok
+  hosted sandbox contract — the preview proxy auto-discovers its fixed port
+  there, and that platform behavior is unchanged. On your own machine this
+  repo's dev server runs on **8091** per the port map (the `dev` script's
+  `--port` flag overrides locally); the `vite preview` QA contract on 8081 is
+  untouched.
 
 ---
 
@@ -110,8 +116,11 @@ it with the same priority as this file.
 ### Where you are
 
 - **`/workspace`** is the project root; Linux container, **Node 22**.
-- The app **must listen on `0.0.0.0:8080`** — the preview proxy prefers a server
-  bound on all interfaces. Don't bind loopback-only; don't pick another port.
+- **In the Grok sandbox** the app **must listen on `0.0.0.0:8080`** — the preview
+  proxy prefers a server bound on all interfaces. Don't bind loopback-only;
+  don't pick another port there — non-negotiable on the platform. **Local dev
+  follows the repo port map instead:** `npm run dev` runs on 8091 via its
+  `--port` flag, which overrides the config locally.
 - The sandbox may be stopped or replaced; **`/workspace/startup.sh`** is the
   restart contract you own.
 
