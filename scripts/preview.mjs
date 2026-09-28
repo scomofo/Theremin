@@ -301,6 +301,9 @@ async function restart() {
     cwd: ROOT,
     detached: true,
     stdio: ["ignore", log, log],
+    // On Windows, `npm` resolves to a `.cmd` shim that spawn cannot execute
+    // without a shell (spawn npm ENOENT).
+    shell: process.platform === "win32",
   });
   child.unref();
   writeFileSync(PID_FILE, `${child.pid}\n`);
